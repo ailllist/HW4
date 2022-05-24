@@ -15,23 +15,22 @@ def RotSatPos(sat: gp.GpsSat, obs):
     sat.xk, sat.yk, sat.zk = SatPos[0], SatPos[1], SatPos[2]
 
 def least_square_est(H: np.ndarray, y: np.ndarray, x: np.ndarray):
-    # TODO x관련 식 추가 해줘야됨.
-    # print(H.T@H)
+
     p_x_hat = np.linalg.inv(H.T@H)
     
     x_hat = p_x_hat@H.T@y
     x = x + x_hat
     norm = np.linalg.norm(x_hat)
-    print("x_hat: ", x_hat)
-    print("norm(x_hat[x, y, z, delta_tr]): ", norm)
-    print("x: ", x)
-    print("---------------------------------------------------")
+    # print("x_hat: ", x_hat)
+    # print("norm(x_hat[x, y, z, delta_tr]): ", norm)
+    # print("x: ", x)
+    # print("---------------------------------------------------")
     return x, norm
 
 TRUE_POS = [-3062023.912, 4055448.883, 3841819.124]
 
 APPROX_POSITION_XYZ = [-3062023.5630, 4055449.0330, 3841819.2130]
-calc_time = [1, 45, 0] # hour, min, sec, GPS_Week_sec
+calc_time = [1, 45, 0] # hour, min, sec, GPS_Week_day
 tgpt = ror.tot_sat_pos # Total Gps Pos for time (dict)
 keys = list(tgpt.keys())
 # 15  2  1  0  0  0.0000000
@@ -104,9 +103,9 @@ for eph in range(10):
         tk = tot_data[i].calc_tk(calc_time, STT)
         
         TGD = tot_data[i].TGD
-        print("TGD :", TGD)
+        # print("TGD :", TGD)
         d_REL = -4.442807633e-10 * tot_data[i].e * tot_data[i].sqrt_a * math.sin(tot_data[i].Ek)
-        print("d_REL :", d_REL)
+        # print("d_REL :", d_REL)
         delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL - TGD
         # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL
         # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk - TGD
