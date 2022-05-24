@@ -106,15 +106,16 @@ for eph in range(10):
         # print("TGD :", TGD)
         d_REL = -4.442807633e-10 * tot_data[i].e * tot_data[i].sqrt_a * math.sin(tot_data[i].Ek)
         # print("d_REL :", d_REL)
-        delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL - TGD
-        # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL
-        # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk - TGD
-        
+        delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + tot_data[i].SV_clock_drift_rate * tk**2 + d_REL - TGD
+        # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + tot_data[i].SV_clock_drift_rate * tk**2 + d_REL
+        # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + tot_data[i].SV_clock_drift_rate * tk**2 - TGD
+        # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + tot_data[i].SV_clock_drift_rate * tk**2
         cal_x = tot_data[i].xk - x[0]
         cal_y = tot_data[i].yk - x[1]
         cal_z = tot_data[i].zk - x[2]
         rho = math.sqrt(cal_x**2 + cal_y**2 + cal_z**2) + x[3] + 299_792_458*(-1*delta_ts)
-    
+        # rho = math.sqrt(cal_x**2 + cal_y**2 + cal_z**2) + x[3]
+        
         y[num] = CA_code - rho
         H[num][0] = -1 * (cal_x)/rho
         H[num][1] = -1 * (cal_y)/rho
@@ -132,6 +133,7 @@ for eph in range(10):
         break
 
 p_3D_Error = TRUE_POS[:3] - x[:3]
-print(TRUE_POS, x)
-print(p_3D_Error)
-print("3D Error :", np.linalg.norm(p_3D_Error), "\bm")
+print(f"Ground Truth : {TRUE_POS}")
+print(f"Computed Position : {x[:3]}")
+print(f"Error : {p_3D_Error}")
+print("3D Error :", np.linalg.norm(p_3D_Error), "m")

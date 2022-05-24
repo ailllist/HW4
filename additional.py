@@ -98,10 +98,12 @@ for eph in range(10):
     
     for num, i in enumerate(gps_prn_list):
         CA_code = float(_15osat[i]["C1"][0].strip())
-        P2_code = float(_15osat[i]["P2"][0].strip())
-        
-        CA_code = 2.5457 * CA_code - 1.5457 * P2_code
-        
+        try:
+            P2_code = float(_15osat[i]["C2"][0].strip())
+            CA_code = 2.5457 * CA_code - 1.5457 * P2_code
+        except:
+            pass
+        #
         STT = CA_code / 299_792_458
         tot_data[i].calc_gps_pos(obs_cal_time, STT)  # calc_time 은 obs_rinex기준으로 둘 것
         # tot_data[i].calc_gps_pos(calc_time)
@@ -109,9 +111,9 @@ for eph in range(10):
         tk = tot_data[i].calc_tk(calc_time, STT)
         
         TGD = tot_data[i].TGD
-        print("TGD :", TGD)
+        # print("TGD :", TGD)
         d_REL = -4.442807633e-10 * tot_data[i].e * tot_data[i].sqrt_a * math.sin(tot_data[i].Ek)
-        print("d_REL :", d_REL)
+        # print("d_REL :", d_REL)
         delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL - TGD
         # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL
         # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk - TGD
@@ -138,6 +140,7 @@ for eph in range(10):
         break
 
 p_3D_Error = TRUE_POS[:3] - x[:3]
-print(TRUE_POS, x)
-print(p_3D_Error)
-print("3D Error :", np.linalg.norm(p_3D_Error), "\bm")
+print(f"Ground Truth : {TRUE_POS}")
+print(f"Computed Position : {x[:3]}")
+print(f"Error : {p_3D_Error}")
+print("3D Error :", np.linalg.norm(p_3D_Error), "m")
