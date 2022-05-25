@@ -87,14 +87,14 @@ gps_prn_list = list(tot_data.keys())
 
 H = np.zeros((len(gps_prn_list), 4))
 y = np.zeros(len(gps_prn_list))
-x = np.array([-3062023.5630, 4055449.0330, 3841819.2130, 1])
-
+x = np.array([-3062023.5630, 4055449.0330, 3841819.2130, 0])
+# 3D Error : 27.4461426026211 m
 for eph in range(10):
     print("-------------------------%d-------------------------" % eph)
 
     for num, i in enumerate(gps_prn_list):
     
-        CA_code = float(_15osat[i]["C1"][0].strip())
+        CA_code = float(_15osat[i]["P2"][0].strip())
     
         STT = CA_code / 299_792_458
         tot_data[i].calc_gps_pos(obs_cal_time, STT) # calc_time 은 obs_rinex기준으로 둘 것

@@ -91,7 +91,7 @@ gps_prn_list = list(tot_data.keys())
 
 H = np.zeros((len(gps_prn_list), 4))
 y = np.zeros(len(gps_prn_list))
-x = np.array([-3062023.5630, 4055449.0330, 3841819.2130, 1])
+x = np.array([-3062023.5630, 4055449.0330, 3841819.2130, 0])
 
 for eph in range(10):
     print("-------------------------%d-------------------------" % eph)
@@ -117,12 +117,14 @@ for eph in range(10):
         delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL - TGD
         # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk + d_REL
         # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk - TGD
-        
+        # delta_ts = tot_data[i].SV_clock_bias + tot_data[i].SV_clock_drift * tk
+
         cal_x = tot_data[i].xk - x[0]
         cal_y = tot_data[i].yk - x[1]
         cal_z = tot_data[i].zk - x[2]
         rho = math.sqrt(cal_x ** 2 + cal_y ** 2 + cal_z ** 2) + x[3] + 299_792_458 * (-1 * delta_ts)
-        
+        # rho = math.sqrt(cal_x ** 2 + cal_y ** 2 + cal_z ** 2) + x[3]
+
         y[num] = CA_code - rho
         H[num][0] = -1 * (cal_x) / rho
         H[num][1] = -1 * (cal_y) / rho
